@@ -1,15 +1,12 @@
-package academy;
+package academyProject;
 
-import java.io.*;
+import academy.*;
+import academyProject.comparators.*;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Scanner;
 
-public class Project {
-
-    private static ArrayList array;
-    private static String filename;
-
+public class Menu {
     public static void addPeople(ArrayList list) {
         list.add(new Student("Anna", "Nowak", "01321082190", "Kobieta", "543765", false, "Informatyka"));
         list.add(new Student("Robert", "Smith", "97022582190", "Mê¿czyzna", "582741", true, "Fizyka"));
@@ -151,44 +148,9 @@ public class Project {
                 break;
             }
         }
-        saveData(people,"People.ser");
+        FileHandling.saveDataPeople(people,"People.ser");
     }
 
-    public static void saveData(ArrayList array, String filename) {
-        try {
-            FileOutputStream fos = new FileOutputStream(filename);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            Integer size = array.size();
-            oos.writeObject(size);
-            for (Object o : array) {
-                oos.writeObject(o);
-            }
-            oos.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void readData(ArrayList<Course> courses, ArrayList<Person> people) {
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Courses.ser"));
-            Integer counter = (Integer) ois.readObject();
-
-            for(int i=0;i<counter;i++){
-                courses.add((Course)ois.readObject());
-            }
-            ois = new ObjectInputStream(new FileInputStream("People.ser"));
-            counter = (Integer) ois.readObject();
-
-            for(int i=0;i<counter;i++){
-                people.add((Person) ois.readObject());
-            }
-
-            ois.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
 
     public static void addPerson(ArrayList<Person> people){
@@ -260,26 +222,12 @@ public class Project {
                 break;
             }
         }
-        saveData(people,"People.ser");
+        FileHandling.saveDataPeople(people,"People.ser");
     }
 
+    public static void showMenu(ArrayList<Person> people, ArrayList<Course> courses){
 
-
-    public static void main(String[] args){
         Scanner scan = new Scanner(System.in);
-        ArrayList<Course> courses = new ArrayList<Course>();
-        ArrayList<Person> people = new ArrayList<Person>();
-
-        //addCourses(courses);    // dodawanie kursów
-        //addPeople(people);      // dodawanie osób
-        //assignCourses(people, courses);     // przypiswyanie studentom kursów domyœlnych (tych, na które uczêszczaj¹ z racji wybranego kierunku studiów)
-
-        readData(courses,people);
-
-        printAllPeople(people);
-
-        System.out.println("-----------------------------------------------------\n\n");
-
         int choice = 0;
         System.out.println("Co chcesz zrobiæ?\n[1] - dodaæ do bazy now¹ osobê\n[2] - usun¹æ osobê z bazy\n[3] - wyœwietliæ posortowan¹ listê osób");
         choice = scan.nextInt();
@@ -302,63 +250,30 @@ public class Project {
                 choice = scan.nextInt();
                 switch (choice){
                     case 1:{
-                        PersonCompareSurname compSurname = new PersonCompareSurname();
+                        PersonSurnameComparator compSurname = new PersonSurnameComparator();
                         people.sort(compSurname);
                         break;
                     }
                     case 2:{
-                        PersonCompareSurnameAndName compSurnameAndName = new PersonCompareSurnameAndName();
+                        PersonSurnameAndNameComparator compSurnameAndName = new PersonSurnameAndNameComparator();
                         people.sort(compSurnameAndName);
                         break;
                     }
                     case 3:{
-                        PersonCompareSurnameAndAge compSurnameAndAge = new PersonCompareSurnameAndAge();
+                        PersonSurnameAndAgeComparator compSurnameAndAge = new PersonSurnameAndAgeComparator();
                         people.sort(compSurnameAndAge);
                         break;
                     }
                     default: break;
                 }
 
-               // printAllPeople(people);
+                // printAllPeople(people);
                 break;
             }
             default:{
                 break;
             }
         }
-
-        printAllPeople(people);
-
-        saveData(people,"People.ser");
-        saveData(courses,"Courses.ser");
-
         scan.close();
-    }
-
-}
-
-class PersonCompareSurname implements Comparator<Person> {
-    public int compare(Person p1, Person p2){
-        return p1.getSurname().compareTo(p2.getSurname());
-    }
-}
-
-class PersonCompareSurnameAndName implements Comparator<Person>{
-    public int compare(Person p1, Person p2){
-        if(!p1.getSurname().equals(p2.getSurname()))
-            return p1.getSurname().compareTo(p2.getSurname());
-        if(p1.getSurname().equals(p2.getSurname()) && (p1.getName().compareTo(p2.getName()))<0) return -1;
-        if(p1.getSurname().equals(p2.getSurname()) && (p1.getName().compareTo(p2.getName()))>0) return 1;
-        return 0;
-    }
-}
-
-class PersonCompareSurnameAndAge implements Comparator<Person>{
-    public int compare(Person p1, Person p2){
-        if(!p1.getSurname().equals(p2.getSurname()))
-            return p1.getSurname().compareTo(p2.getSurname());
-        if(p1.getSurname().equals(p2.getSurname()) && (p1.getAge()<p2.getAge())) return -1;
-        if(p1.getSurname().equals(p2.getSurname()) && (p1.getAge()>p2.getAge())) return 1;
-        return 0;
     }
 }

@@ -22,6 +22,7 @@ public abstract class Person implements Serializable {
     }
 
     private boolean isCheckPesel(String pesel) {
+        if(pesel.length()!=11) return false;
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int yearFromPesel = Integer.parseInt(pesel.substring(0, 2));
         int monthFromPesel = Integer.parseInt(pesel.substring(2, 4));
